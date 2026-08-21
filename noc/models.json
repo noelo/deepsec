@@ -1,0 +1,19 @@
+{
+  "providers": {
+    "vllm": {
+      "baseUrl": "https://.com/v1",
+      "api": "openai-completions",
+      "models": [
+        {
+          "id": "Qwen3.6-35B-A3B",
+          "name": "Qwen3.6-35B-A3B",
+          "input": ["text"],
+          "cost": { "input": 0, "output": 0, "cacheRead": 0, "cacheWrite": 0 },
+          "contextWindow": 131072,
+          "maxTokens": 8192,
+          "compat": { "thinkingFormat": "qwen", "supportsReasoningEffort": true }
+        }
+      ]
+    }
+  }
+}

@@ -1,0 +1,23 @@
+FROM registry.access.redhat.com/ubi10/nodejs-22:1787044470
+
+USER 1001
+
+RUN npm add -g deepsec@2.3.5
+
+RUN npm config set offline true 
+
+COPY --chmod=744 deepsec-setup.sh deepsec-setup.sh
+
+RUN mkdir -p ${HOME}/.pi/agent
+
+ENV REPO_DIR='/repo'
+ENV WORK_DIR='/work'
+ENV VERCEL_OIDC_TOKEN=123123
+ENV DEEPSEC_AGENT_DEBUG=0
+ENV LLMAPIKEY=1234OVERRIDE
+ENV PROJECT_ID=0
+ENV MODEL_NAME='vllm/Qwen3.6-35B-A3B'
+ENV MODEL_BASE_URL='https://maas.example.com/v1'
+
+ENTRYPOINT ["bash","/opt/app-root/src/deepsec-setup.sh"]
+# CMD ["--help"]
