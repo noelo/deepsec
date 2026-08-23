@@ -1,8 +1,13 @@
 #!/bin/sh -e
 
+PI_CODING_AGENT_DIR=
+mkdir -p /tmp/.pi/agent
+export PI_CODING_AGENT_DIR=/tmp/.pi/agent
+cp /home/scan/env/models.json /tmp/.pi/agent/models.json
+
 # Check if the model definitions are present otherwise exit
-if [ ! -f "$HOME/.pi/agent/models.json" ]; then
-  echo "ERROR - Model definitions not found at $HOME/.pi/agent/models.json"; 
+if [ ! -f "/tmp/.pi/agent/models.json" ]; then
+  echo "ERROR - Model definitions not found at /tmp/.pi/agent/models.json"; 
   exit -1; 
 fi
 

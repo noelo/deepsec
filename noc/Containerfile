@@ -1,14 +1,28 @@
-FROM registry.access.redhat.com/ubi10/nodejs-22:1787044470
+#FROM registry.access.redhat.com/ubi10/nodejs-22:1787044470
+FROM node:22-slim
 
-USER 1001
+USER root
+RUN useradd -m -u 1002 scan
+USER scan
 
-RUN npm add -g deepsec@2.3.5
+WORKDIR /home/scan/
+
+
+# COPY package.json /home/scan/
+# RUN npm install
+
+
+ENV NPM_CONFIG_PREFIX=/home/scan/.npm-global PATH=/home/scan/.npm-global/bin:$PATH
+RUN npm add deepsec@2.3.5
+# RUN npm cache add deepsec@2.3.5
+# RUN npm ci --offline
 
 RUN npm config set offline true 
 
-COPY --chmod=744 deepsec-setup.sh deepsec-setup.sh
+COPY --chmod=744 deepsec-setup.sh /home/scan/deepsec-setup.sh
 
-RUN mkdir -p ${HOME}/.pi/agent
+# TEMPORARY TESTING -- REMOVE
+COPY models.json /home/scan/env/models.json
 
 ENV REPO_DIR='/repo'
 ENV WORK_DIR='/work'
@@ -19,5 +33,7 @@ ENV PROJECT_ID=0
 ENV MODEL_NAME='vllm/Qwen3.6-35B-A3B'
 ENV MODEL_BASE_URL='https://maas.example.com/v1'
 
-ENTRYPOINT ["bash","/opt/app-root/src/deepsec-setup.sh"]
+WORKDIR /home/scan/
+
+ENTRYPOINT ["bash","/home/scan/deepsec-setup.sh"]
 # CMD ["--help"]
