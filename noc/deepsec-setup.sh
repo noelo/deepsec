@@ -1,7 +1,6 @@
 #!/bin/sh -e
 
 
-PI_CODING_AGENT_DIR=
 mkdir -p /tmp/.pi/agent
 export PI_CODING_AGENT_DIR=/tmp/.pi/agent
 cp /home/scan/env/models.json /tmp/.pi/agent/models.json
