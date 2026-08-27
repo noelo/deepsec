@@ -1,0 +1,25 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  labels:
+    tekton.dev/pipeline: deepsec-repo-scan
+  name: deepsec-scan-vwn5oq
+  namespace: deepsec
+spec:
+  params:
+  - name: repo-url
+    value: https://github.com/noelo/deepsec
+  - name: revision
+    value: main
+  - name: model-name
+    value: vllm/glm-5.3-flash
+  pipelineRef:
+    name: deepsec-repo-scan
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 1h0m0s
+  workspaces:
+  - name: source
+    persistentVolumeClaim:
+      claimName: deepsec-scan-pvc

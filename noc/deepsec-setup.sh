@@ -1,14 +1,15 @@
 #!/bin/sh -e
 PROJECT_ID=${PROJECT_ID:-$(date +%s)}
+WORK_DIR=${WORK_DIR:-"/work"}
 
 mkdir -p /tmp/.pi/agent
 export PI_CODING_AGENT_DIR=/tmp/.pi/agent
 cp /home/scan/env/models.json /tmp/.pi/agent/models.json
 
-export NPM_CONFIG_PREFIX=/work/npm
-mkdir -p /work/npm/npm
-npm config set cache /work/npm/npm --global
-cp -R -p /home/scan/.npm/* /work/npm/npm
+export NPM_CONFIG_PREFIX=$WORK_DIR/npm
+mkdir -p $WORK_DIR/npm/
+npm config set cache /home/scan/.npm/ 
+# cp -R /home/scan/.npm/* $WORK_DIR/npm/
 
 
 # Check if the model definitions are present otherwise exit

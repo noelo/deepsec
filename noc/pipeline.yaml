@@ -1,0 +1,132 @@
+apiVersion: v1
+items:
+- apiVersion: tekton.dev/v1
+  kind: Pipeline
+  metadata:
+    annotations:
+    name: deepsec-repo-scan
+    namespace: deepsec
+  spec:
+    params:
+    - name: repo-url
+      type: string
+    - default: main
+      name: revision
+      type: string
+    - default: vllm/glm-5.3-flash
+      name: model-name
+      type: string
+    tasks:
+    - name: clone
+      params:
+      - name: url
+        value: $(params.repo-url)
+      - name: revision
+        value: $(params.revision)
+      taskRef:
+        kind: Task
+        name: git-clone
+      workspaces:
+      - name: output
+        workspace: source
+    - name: scan
+      params:
+      - name: repo-name
+        value: $(tasks.clone.results.repo-name)
+      - name: model-name
+        value: $(params.model-name)
+      runAfter:
+      - clone
+      taskSpec:
+        metadata: {}
+        params:
+        - name: repo-name
+          type: string
+        - name: model-name
+          type: string
+        spec: null
+        stepTemplate:
+          computeResources: {}
+          env:
+          - name: MODEL_BASE_URL
+            valueFrom:
+              secretKeyRef:
+                key: MODEL_BASE_URL
+                name: llm-access
+          - name: LLMAPIKEY
+            valueFrom:
+              secretKeyRef:
+                key: LLMAPIKEY
+                name: llm-access
+          - name: MODEL_NAME
+            value: $(params.model-name)
+          - name: REPO_DIR
+            value: $(workspaces.source.path)/repo/$(params.repo-name)
+          - name: WORK_DIR
+            value: $(workspaces.source.path)/work
+        steps:
+        - computeResources: {}
+          env:
+          - name: MODEL_CONFIG_DIR
+            value: /home/scan/env
+          image: quay.io/noeloc/deepsec-runner:latest
+          name: pre-prepare
+          script: |
+            set -e
+            mkdir -p "$(workspaces.source.path)/work"
+            cd /home/scan/
+            bash -x /home/scan/deepsec-setup.sh
+          volumeMounts:
+          - mountPath: /home/scan/env
+            name: model-config
+          workingDir: $(workspaces.source.path)/repo/$(params.repo-name)
+        - args:
+          - repo-scan
+          computeResources: {}
+          env:
+          - name: MODEL_CONFIG_DIR
+            value: /home/scan/env
+          image: quay.io/noeloc/deepsec-runner:latest
+          name: repo-scan
+          volumeMounts:
+          - mountPath: /home/scan/env
+            name: model-config
+          workingDir: $(workspaces.source.path)/repo/$(params.repo-name)
+        volumes:
+        - configMap:
+            name: model-defn
+          name: model-config
+        workspaces:
+        - name: source
+      workspaces:
+      - name: source
+        workspace: source
+    - name: export
+      params:
+      - name: repo-name
+        value: $(tasks.clone.results.repo-name)
+      runAfter:
+      - scan
+      taskSpec:
+        metadata: {}
+        params:
+        - name: repo-name
+          type: string
+        spec: null
+        steps:
+        - args:
+          - post-report
+          computeResources: {}
+          image: quay.io/noeloc/deepsec-runner:latest
+          name: export
+          workingDir: $(workspaces.source.path)/repo/$(params.repo-name)
+        workspaces:
+        - name: source
+      workspaces:
+      - name: source
+        workspace: source
+    workspaces:
+    - name: source
+kind: List
+metadata:
+  resourceVersion: ""
