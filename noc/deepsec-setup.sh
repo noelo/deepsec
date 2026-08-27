@@ -1,5 +1,5 @@
 #!/bin/sh -e
-PROJECT_ID=$(date +%s)
+PROJECT_ID=${PROJECT_ID:-$(date +%s)}
 
 mkdir -p /tmp/.pi/agent
 export PI_CODING_AGENT_DIR=/tmp/.pi/agent
@@ -33,3 +33,6 @@ EOF
 fi
 
 DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec init --headless --no-tui --force --id $PROJECT_ID --model $MODEL_NAME --model-auth custom --ai-provider vllm  --ai-api-key-env LLMAPIKEY --ai-base-url $MODEL_BASE_URL  --ai-credential-header Authorization:bearer --agent pi  --package-manager npm $WORK_DIR $REPO_DIR
+
+cd "$WORK_DIR"
+DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec report --project-id PROJECT_ID

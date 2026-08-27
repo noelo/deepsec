@@ -11,16 +11,8 @@ USER scan
 
 WORKDIR /home/scan/
 
-
-# COPY package.json /home/scan/
-# RUN npm install
-
-# RUN mkdir -p /home/scan/.npm-global
-
 ENV NPM_CONFIG_PREFIX=/home/scan/.npm-global PATH=/home/scan/.npm-global/bin:$PATH
 RUN npm add deepsec@2.3.8
-# RUN npm cache add deepsec@2.3.5
-# RUN npm ci --offline
 
 RUN npm config set offline true 
 
