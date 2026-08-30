@@ -77,3 +77,6 @@ DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec init --scaffold-only -
 42  DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec export --project-id 0
 
 export REPO_DIR=/work/repo/deepsec/
+
+
+DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true  npx deepsec init --plan --output json

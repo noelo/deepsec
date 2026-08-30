@@ -1,16 +1,14 @@
 #!/bin/sh -e
-PROJECT_ID=${PROJECT_ID:-$(date +%s)}
 WORK_DIR=${WORK_DIR:-"/work"}
+
+if [[ -z "$PROJECT_ID" ]]; then
+    echo "Must provide PROJECT_ID in environment" 1>&2
+    exit 1
+fi
 
 mkdir -p /tmp/.pi/agent
 export PI_CODING_AGENT_DIR=/tmp/.pi/agent
 cp /home/scan/env/models.json /tmp/.pi/agent/models.json
-
-export NPM_CONFIG_PREFIX=$WORK_DIR/npm
-mkdir -p $WORK_DIR/npm/
-npm config set cache /home/scan/.npm/ 
-# cp -R /home/scan/.npm/* $WORK_DIR/npm/
-
 
 # Check if the model definitions are present otherwise exit
 if [ ! -f "/tmp/.pi/agent/models.json" ]; then
@@ -34,6 +32,3 @@ EOF
 fi
 
 DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec init --headless --no-tui --force --id $PROJECT_ID --model $MODEL_NAME --model-auth custom --ai-provider vllm  --ai-api-key-env LLMAPIKEY --ai-base-url $MODEL_BASE_URL  --ai-credential-header Authorization:bearer --agent pi  --package-manager npm $WORK_DIR $REPO_DIR
-
-cd "$WORK_DIR"
-DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec report --project-id PROJECT_ID

@@ -11,14 +11,15 @@ USER scan
 
 WORKDIR /home/scan/
 
-ENV NPM_CONFIG_PREFIX=/home/scan/.npm-global PATH=/home/scan/.npm-global/bin:$PATH
+RUN npm config set cache /home/scan/.npm/ 
 RUN npm add deepsec@2.3.8
-
+RUN npm install-scripts approve @google/genai@1.52.0
+RUN npm install-scripts approve protobufjs@7.6.6
 RUN npm config set offline true 
 
 COPY --chmod=744 deepsec-setup.sh /home/scan/deepsec-setup.sh
 
-COPY --chmod=744 deepsec-app.sh /home/scan/deepsec-app.sh
+COPY --chmod=744 deepsec-report.sh /home/scan/deepsec-report.sh
 
 # TEMPORARY TESTING -- REMOVE
 COPY models.json /home/scan/env/models.json
