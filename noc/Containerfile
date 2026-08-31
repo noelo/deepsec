@@ -17,8 +17,11 @@ RUN npm install-scripts approve @google/genai@1.52.0
 RUN npm install-scripts approve protobufjs@7.6.6
 RUN npm config set offline true 
 
-COPY --chmod=744 deepsec-setup.sh /home/scan/deepsec-setup.sh
+RUN chmod a+r /home/scan/.npmrc
 
+COPY --chmod=744 deepsec-setup.sh /home/scan/deepsec-setup.sh
+COPY --chmod=744 deepsec-scan.sh /home/scan/deepsec-scan.sh
+COPY --chmod=744 deepsec-process.sh /home/scan/deepsec-process.sh
 COPY --chmod=744 deepsec-report.sh /home/scan/deepsec-report.sh
 
 # TEMPORARY TESTING -- REMOVE

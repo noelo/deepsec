@@ -34,6 +34,4 @@ fi
 # OpenShift needs this for some reason
 cp -R /home/scan/node_modules "$WORK_DIR"
 
-# DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec init --headless --no-tui --force --id $PROJECT_ID --model $MODEL_NAME --model-auth custom --ai-provider vllm  --ai-api-key-env LLMAPIKEY --ai-base-url $MODEL_BASE_URL  --ai-credential-header Authorization:bearer --agent pi  --package-manager npm $WORK_DIR $REPO_DIR
-
-DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec init --scaffold-only --headless --no-tui --force --id $PROJECT_ID --model $MODEL_NAME --model-auth custom --ai-provider vllm  --ai-api-key-env LLMAPIKEY --ai-base-url $MODEL_BASE_URL  --ai-credential-header Authorization:bearer --agent pi  --package-manager npm $WORK_DIR $REPO_DIR
+DEEPSEC_AGENT_DEBUG=1 npm_config_offline=true npx deepsec process  --project-id $PROJECT_ID --model $MODEL_NAME --ai-provider vllm  --ai-api-key-env LLMAPIKEY --ai-base-url $MODEL_BASE_URL --agent pi
