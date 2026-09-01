@@ -1,0 +1,27 @@
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  name: full-airflow-v3-1-stable
+  namespace: deepsec
+  labels:
+    tekton.dev/pipeline: deepsec-repo-scan
+spec:
+  params:
+    - name: repo-url
+      value: 'https://github.com/apache/airflow.git'
+    - name: revision
+      value: v3-1-stable
+    - name: model-name
+      value: vllm/glm-5.3-flash
+    - name: project-id
+      value: full-airflow-v3-1-stable-2
+  pipelineRef:
+    name: deepsec-repo-scan
+  taskRunTemplate:
+    serviceAccountName: pipeline
+  timeouts:
+    pipeline: 4h0m0s
+  workspaces:
+    - name: source
+      persistentVolumeClaim:
+        claimName: deepsec-scan-pvc
